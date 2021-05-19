@@ -58,7 +58,14 @@ class App extends React.Component {
     //         break;
     //       }
     //   }
-    if (nextQuestionId !== "init") {
+    if (/^https:*/.test(nextQuestionId)) {
+      const a = document.createElement("a");
+      a.href = nextQuestionId;
+      a.target = "_blank";
+      a.click();
+    } else if (nextQuestionId === "init") {
+      setTimeout(() => this.displayNextQuestion(nextQuestionId), 500);
+    } else {
       const chats = this.state.chats;
       chats.push({
         text: selectedAnswer,
@@ -67,13 +74,20 @@ class App extends React.Component {
       this.setState({
         chats: chats,
       });
+      setTimeout(() => this.displayNextQuestion(nextQuestionId), 1000);
     }
-    this.displayNextQuestion(nextQuestionId);
   };
 
   componentDidMount() {
     const initAnswer = "";
     this.selectAnswer(initAnswer, this.state.currentId);
+  }
+
+  componentDidUpdate() {
+    const scrollArea = document.getElementById("scroll-area");
+    if (scrollArea) {
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
   }
 
   render() {
